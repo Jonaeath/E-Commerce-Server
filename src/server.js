@@ -1,9 +1,10 @@
-const express = require('express');
-const app = express();
+const { serverPort } = require('./secret')
+const app = require('./app')
+const connectDB = require('./Config/db')
 
 
+app.listen(serverPort, async()=>{
+    console.log(`My Server is running at http://localhost:${serverPort}`)
 
-
-app.listen(4000, ()=>{
-    console.log(`My Server is running at http://localhost:4000`)
+    await connectDB()
 })
