@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const createError = require('http-errors');
 const userRouter = require('./Routers/userRouter');
 const seedRouter = require('./Routers/seedRouter');
+const { errorResponse } = require('./Controllers/responseController');
 const app = express();
 
 app.use(morgan('dev'))
@@ -21,11 +22,12 @@ app.get('/test',(req,res)=>{
 
 // server error handeling ---> all the error
 app.use((err,req,res,next)=>{
-    return res.status(err.status || 500).json({
-        success:false,
-        message: err.message,
-    })
-})
+   return errorResponse(res, {
+    statusCode:err.status,
+    message:err.message,
+   })
+
+});
 
 
 module.exports = app;
