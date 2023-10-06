@@ -2,12 +2,16 @@ const express = require('express');
 const morgan = require('morgan');
 const createError = require('http-errors');
 const userRouter = require('./Routers/userRouter');
+const seedRouter = require('./Routers/seedRouter');
 const app = express();
 
 app.use(morgan('dev'))
 
 
 app.use("/api/users",userRouter);
+app.use("/api/seed",seedRouter );
+
+
 
 app.get('/test',(req,res)=>{
     res.status(200).send({
