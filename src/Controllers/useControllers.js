@@ -1,10 +1,11 @@
 //  Controller handel logical part only and we keep all logical part here
 const createError = require('http-errors');
+const fs = require('fs');
 const { users } = require('../Model/userModel');
 const User = require('../Model/userModel');
 const { successResponse } = require('./responseController');
-const  mongoose  = require('mongoose');
-const { findUserById } = require('../Services/findUser');
+const { findWithId } = require('../Services/findItem');
+const { deleteImage } = require('../Helper/deleteimage');
 
 //  For all users
 const getUsers = async (req,res,next)=>{
@@ -60,11 +61,12 @@ const getUsers = async (req,res,next)=>{
 }
 
 // For single user - find using id
-const getUser = async (req,res,next)=>{
+const getUserById = async (req,res,next)=>{
     try {
         const id = req.params.id;
+        const options = { password: 0 };
 
-        const user = await findUserById(id)
+        const user = await findWithId(User,id,options)
 
         return successResponse(res,{
             statusCode:200,
@@ -77,4 +79,32 @@ const getUser = async (req,res,next)=>{
     }
 };
 
-module.exports = {getUsers, getUser}
+
+const deleteUserById = async (req,res,next)=>{
+    try {
+        const id = req.params.id;
+        const options = { password: 0 };
+// when we want to delete a user,first we find a user
+        const user = await findWithId(User,id,options)
+// then we delete our user image path
+        const userImagePath = user.image;
+         deleteImage(userImagePath);
+
+        //  after delete image then we delete user
+        await User.findByIdAndDelete({
+            _id: id,
+            // Never delete admin
+            isAdmin: false,   
+        });
+
+        return successResponse(res,{
+            statusCode:200,
+            message:'user were Delete successfully',
+        })
+
+    } catch(error){
+        next(error);
+    }
+};
+
+module.exports = {getUsers, getUserById, deleteUserById}
