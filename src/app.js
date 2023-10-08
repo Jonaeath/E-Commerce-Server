@@ -7,18 +7,11 @@ const { errorResponse } = require('./Controllers/responseController');
 const app = express();
 
 app.use(morgan('dev'))
-
+app.use(express.json());
 
 app.use("/api/users",userRouter);
 app.use("/api/seed",seedRouter );
 
-
-
-app.get('/test',(req,res)=>{
-    res.status(200).send({
-        message:'api testing is fine', 
-    })
-})
 
 // server error handeling ---> all the error
 app.use((err,req,res,next)=>{
